@@ -1,0 +1,484 @@
+openapi: 3.0.3
+info:
+  title: ИРФАН — Аруу жүрөк API
+  version: 1.0.0
+  description: |
+    «ИРФАН» диний уюмунун «Аруу жүрөк» диний-агартуу курсу үчүн ачык REST API.
+    Бардык endpoint'дер окуу үчүн гана (GET). Маалыматтар Admin панели аркылуу башкарылат.
+
+    ### Пагинация
+    Тизме жооптору төмөнкү форматта кайтарылат:
+    ```json
+    { "count": 10, "next": "...?page=2", "previous": null, "results": [...] }
+    ```
+  contact:
+    name: ИРФАН диний уюму
+    email: irfanreligiousorg@gmail.com
+
+servers:
+  - url: http://127.0.0.1:8000
+    description: Жергиликтүү development сервери
+
+tags:
+  - name: Окуу багыттары
+    description: Диний-агартуу курсунун багыттары
+  - name: Мугалимдер
+    description: Курстун мугалимдери жана устаздары
+  - name: Сабактар
+    description: Окуу программасындагы сабактар
+  - name: Жаңылыктар
+    description: Уюмдун жаңылыктары жана макалалары
+  - name: FAQ
+    description: Көп берилүүчү суроолор жана жооптор
+
+paths:
+
+  /api/categories/:
+    get:
+      tags: [Окуу багыттары]
+      summary: Окуу багыттарынын тизмеси
+      operationId: categories_list
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+
+  /api/categories/{id}/:
+    get:
+      tags: [Окуу багыттары]
+      summary: Бир окуу багытынын маалыматы
+      operationId: categories_retrieve
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/teachers/:
+    get:
+      tags: [Мугалимдер]
+      summary: Мугалимдердин тизмеси
+      operationId: teachers_list
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeacherList'
+
+  /api/teachers/{slug}/:
+    get:
+      tags: [Мугалимдер]
+      summary: Бир мугалимдин маалыматы
+      operationId: teachers_retrieve
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/lessons/:
+    get:
+      tags: [Сабактар]
+      summary: Сабактардын тизмеси
+      operationId: lessons_list
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLessonList'
+
+  /api/lessons/{id}/:
+    get:
+      tags: [Сабактар]
+      summary: Бир сабактын маалыматы
+      operationId: lessons_retrieve
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/news/:
+    get:
+      tags: [Жаңылыктар]
+      summary: Жаңылыктардын тизмеси
+      operationId: news_list
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsList'
+
+  /api/news/{slug}/:
+    get:
+      tags: [Жаңылыктар]
+      summary: Бир жаңылыктын толук маалыматы
+      operationId: news_retrieve
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/faq/:
+    get:
+      tags: [FAQ]
+      summary: Көп берилүүчү суроолордун тизмеси
+      operationId: faq_list
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFAQList'
+
+  /api/faq/{id}/:
+    get:
+      tags: [FAQ]
+      summary: Бир FAQ жазуусунун маалыматы
+      operationId: faq_retrieve
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Ийгиликтүү жооп
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      description: Объекттин уникалдуу ID номери
+    Slug:
+      name: slug
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Объекттин уникалдуу URL аталышы
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Бет номери (пагинация)
+
+  responses:
+    NotFound:
+      description: Объект табылган жок
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Not found.
+
+  schemas:
+
+    Category:
+      type: object
+      required: [id, name, slug, description, icon]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Акыйда
+        slug:
+          type: string
+          example: акыйда
+        description:
+          type: string
+          example: Ислам ишениминин негиздери.
+        icon:
+          type: string
+          example: shield-check
+
+    PaginatedCategoryList:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+          example: 4
+        next:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        previous:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+    Teacher:
+      type: object
+      required: [id, name, slug, title, biography]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Абдуллах Алматов
+        slug:
+          type: string
+          example: абдуллах-алматов
+        title:
+          type: string
+          example: Куран устазы
+        biography:
+          type: string
+          example: 15 жылдан ашык тажрыйбасы бар устаз.
+        experience:
+          type: string
+          nullable: true
+          example: 15 жыл
+        photo:
+          type: string
+          format: uri
+          nullable: true
+          example: http://127.0.0.1:8000/media/teachers/photo1.jpg
+
+    PaginatedTeacherList:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+          example: 3
+        next:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        previous:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Teacher'
+
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Таарат алуунун шарттары
+        description:
+          type: string
+          example: Намаз окуудан мурун тааратты туура алуу жөнүндө.
+        category:
+          allOf:
+            - $ref: '#/components/schemas/Category'
+          nullable: true
+        teacher:
+          allOf:
+            - $ref: '#/components/schemas/Teacher'
+          nullable: true
+        duration:
+          type: string
+          example: 45 мүнөт
+        materials:
+          type: string
+          example: Куран, Фикх китеби
+        status:
+          type: string
+          example: Жеткиликтүү
+        order:
+          type: integer
+          example: 1
+
+    PaginatedLessonList:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+          example: 8
+        next:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        previous:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Жаңы окуу жылы башталды
+        slug:
+          type: string
+          example: жаңы-окуу-жылы
+        category:
+          type: string
+          nullable: true
+          example: Жалпы жаңылыктар
+        excerpt:
+          type: string
+          example: Бул жыл жаңы сабактар менен башталат.
+        content:
+          type: string
+          example: Толук мазмун бул жерде...
+        image:
+          type: string
+          format: uri
+          nullable: true
+          example: http://127.0.0.1:8000/media/news/news1.jpg
+        author:
+          type: string
+          nullable: true
+          example: ИРФАН редакциясы
+        published_at:
+          type: string
+          format: date
+          example: '2025-09-01'
+
+    PaginatedNewsList:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+          example: 5
+        next:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        previous:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/News'
+
+    FAQ:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        question:
+          type: string
+          example: Курс акысызбы?
+        answer:
+          type: string
+          example: Ооба, курс толугу менен акысыз.
+        category:
+          type: string
+          nullable: true
+          example: Жалпы суроолор
+        order:
+          type: integer
+          example: 1
+
+    PaginatedFAQList:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+          example: 6
+        next:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        previous:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FAQ'

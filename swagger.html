@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ky">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ИРФАН — API Документация</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    body { margin: 0; background: #faf8f2; }
+    .topbar { background: #0b493d; padding: 14px 28px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+    .topbar-logo { color: #e3c37b; font-size: 20px; font-weight: 700; }
+    .topbar-sub  { color: #ffffffcc; font-size: 14px; }
+    .topbar-badge{ margin-left: auto; background: #e3c37b22; border: 1px solid #e3c37b66; color: #e3c37b; font-size: 12px; padding: 2px 10px; border-radius: 20px; }
+    .swagger-ui .topbar { display: none !important; }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <span class="topbar-logo">ИРФАН</span>
+  <span style="color:#ffffff55">·</span>
+  <span class="topbar-sub">Аруу жүрөк — REST API документациясы</span>
+  <span class="topbar-badge">v1.0.0 · Read-only</span>
+</header>
+<div id="swagger-ui"></div>
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+window.onload = () => SwaggerUIBundle({
+  dom_id: '#swagger-ui',
+  deepLinking: true,
+  tryItOutEnabled: true,
+  displayRequestDuration: true,
+  defaultModelsExpandDepth: 1,
+  defaultModelExpandDepth: 2,
+  docExpansion: 'list',
+  filter: true,
+  spec: {
+    openapi: '3.0.3',
+    info: {
+      title: 'ИРФАН — Аруу жүрөк API',
+      version: '1.0.0',
+      description: '«Аруу жүрөк» диний-агартуу курсунун ачык REST API.\n\n**Пагинация:** Тизме жооптору `{ count, next, previous, results }` форматында кайтарылат.',
+      contact: { name: 'ИРФАН диний уюму', email: 'irfanreligiousorg@gmail.com' }
+    },
+    servers: [{ url: 'http://127.0.0.1:8000', description: 'Жергиликтүү Django сервери' }],
+    tags: [
+      { name: 'Окуу багыттары', description: 'Диний-агартуу курсунун багыттары' },
+      { name: 'Мугалимдер',    description: 'Курстун мугалимдери жана устаздары' },
+      { name: 'Сабактар',      description: 'Окуу программасындагы сабактар' },
+      { name: 'Жаңылыктар',   description: 'Уюмдун жаңылыктары жана макалалары' },
+      { name: 'FAQ',           description: 'Көп берилүүчү суроолор жана жооптор' }
+    ],
+    paths: {
+      '/api/categories/': { get: {
+        tags: ['Окуу багыттары'], summary: 'Окуу багыттарынын тизмеси', operationId: 'categories_list',
+        parameters: [{ $ref: '#/components/parameters/Page' }],
+        responses: { 200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+          schema: { $ref: '#/components/schemas/PaginatedCategoryList' },
+          example: { count: 3, next: null, previous: null, results: [
+            { id: 1, name: 'Акыйда',    slug: 'акыйда',    description: 'Ислам ишениминин негиздери.',        icon: 'shield-check' },
+            { id: 2, name: 'Куран окуу', slug: 'куран-окуу', description: 'Куран Каримди туура окуу.',        icon: 'book-open' },
+            { id: 3, name: 'Намаз',     slug: 'намаз',     description: 'Намазды туура окуу жана шарттары.', icon: 'sun' }
+          ]}
+        }}}}
+      }},
+      '/api/categories/{id}/': { get: {
+        tags: ['Окуу багыттары'], summary: 'Бир окуу багытынын маалыматы', operationId: 'categories_retrieve',
+        parameters: [{ $ref: '#/components/parameters/Id' }],
+        responses: {
+          200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+            schema: { $ref: '#/components/schemas/Category' },
+            example: { id: 1, name: 'Акыйда', slug: 'акыйда', description: 'Ислам ишениминин негиздери.', icon: 'shield-check' }
+          }}},
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }},
+      '/api/teachers/': { get: {
+        tags: ['Мугалимдер'], summary: 'Мугалимдердин тизмеси', operationId: 'teachers_list',
+        parameters: [{ $ref: '#/components/parameters/Page' }],
+        responses: { 200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+          schema: { $ref: '#/components/schemas/PaginatedTeacherList' },
+          example: { count: 1, next: null, previous: null, results: [
+            { id: 1, name: 'Абдуллах Алматов', slug: 'абдуллах-алматов', title: 'Куран устазы', biography: '15 жылдан ашык тажрыйбасы бар устаз.', experience: '15 жыл', photo: 'http://127.0.0.1:8000/media/teachers/photo1.jpg' }
+          ]}
+        }}}}
+      }},
+      '/api/teachers/{slug}/': { get: {
+        tags: ['Мугалимдер'], summary: 'Бир мугалимдин маалыматы', operationId: 'teachers_retrieve',
+        parameters: [{ $ref: '#/components/parameters/Slug' }],
+        responses: {
+          200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+            schema: { $ref: '#/components/schemas/Teacher' },
+            example: { id: 1, name: 'Абдуллах Алматов', slug: 'абдуллах-алматов', title: 'Куран устазы', biography: '15 жылдан ашык тажрыйбасы бар устаз.', experience: '15 жыл', photo: 'http://127.0.0.1:8000/media/teachers/photo1.jpg' }
+          }}},
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }},
+      '/api/lessons/': { get: {
+        tags: ['Сабактар'], summary: 'Сабактардын тизмеси', operationId: 'lessons_list',
+        parameters: [{ $ref: '#/components/parameters/Page' }],
+        responses: { 200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+          schema: { $ref: '#/components/schemas/PaginatedLessonList' },
+          example: { count: 1, next: null, previous: null, results: [
+            { id: 1, title: 'Таарат алуунун шарттары', description: 'Намаз окуудан мурун тааратты туура алуу.',
+              category: { id: 3, name: 'Намаз', slug: 'намаз', description: 'Намазды туура окуу.', icon: 'sun' },
+              teacher: { id: 1, name: 'Абдуллах Алматов', slug: 'абдуллах-алматов', title: 'Куран устазы', biography: '...', experience: '15 жыл', photo: null },
+              duration: '45 мүнөт', materials: 'Куран, Фикх китеби', status: 'Жеткиликтүү', order: 1 }
+          ]}
+        }}}}
+      }},
+      '/api/lessons/{id}/': { get: {
+        tags: ['Сабактар'], summary: 'Бир сабактын маалыматы', operationId: 'lessons_retrieve',
+        parameters: [{ $ref: '#/components/parameters/Id' }],
+        responses: {
+          200: { description: 'Ийгиликтүү жооп', content: { 'application/json': { schema: { $ref: '#/components/schemas/Lesson' } } } },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }},
+      '/api/news/': { get: {
+        tags: ['Жаңылыктар'], summary: 'Жаңылыктардын тизмеси', operationId: 'news_list',
+        parameters: [{ $ref: '#/components/parameters/Page' }],
+        responses: { 200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+          schema: { $ref: '#/components/schemas/PaginatedNewsList' },
+          example: { count: 1, next: null, previous: null, results: [
+            { id: 1, title: 'Жаңы окуу жылы башталды', slug: 'жаңы-окуу-жылы', category: 'Жалпы жаңылыктар', excerpt: 'Бул жыл жаңы сабактар менен башталат.', content: 'Толук мазмун...', image: null, author: 'ИРФАН редакциясы', published_at: '2025-09-01' }
+          ]}
+        }}}}
+      }},
+      '/api/news/{slug}/': { get: {
+        tags: ['Жаңылыктар'], summary: 'Бир жаңылыктын толук маалыматы', operationId: 'news_retrieve',
+        parameters: [{ $ref: '#/components/parameters/Slug' }],
+        responses: {
+          200: { description: 'Ийгиликтүү жооп', content: { 'application/json': { schema: { $ref: '#/components/schemas/News' } } } },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }},
+      '/api/faq/': { get: {
+        tags: ['FAQ'], summary: 'Көп берилүүчү суроолордун тизмеси', operationId: 'faq_list',
+        parameters: [{ $ref: '#/components/parameters/Page' }],
+        responses: { 200: { description: 'Ийгиликтүү жооп', content: { 'application/json': {
+          schema: { $ref: '#/components/schemas/PaginatedFAQList' },
+          example: { count: 2, next: null, previous: null, results: [
+            { id: 1, question: 'Курс акысызбы?',       answer: 'Ооба, курс толугу менен акысыз.',         category: 'Жалпы суроолор', order: 1 },
+            { id: 2, question: 'Онлайн окуу мүмкүнбү?', answer: 'Ооба, онлайн форматта да катала аласыз.', category: 'Окуу форматы',   order: 2 }
+          ]}
+        }}}}
+      }},
+      '/api/faq/{id}/': { get: {
+        tags: ['FAQ'], summary: 'Бир FAQ жазуусунун маалыматы', operationId: 'faq_retrieve',
+        parameters: [{ $ref: '#/components/parameters/Id' }],
+        responses: {
+          200: { description: 'Ийгиликтүү жооп', content: { 'application/json': { schema: { $ref: '#/components/schemas/FAQ' } } } },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }}
+    },
+    components: {
+      parameters: {
+        Id:   { name: 'id',   in: 'path',  required: true,  schema: { type: 'integer', minimum: 1 }, description: 'Объекттин ID номери' },
+        Slug: { name: 'slug', in: 'path',  required: true,  schema: { type: 'string' },              description: 'Объекттин slug аталышы' },
+        Page: { name: 'page', in: 'query', required: false, schema: { type: 'integer', minimum: 1, default: 1 }, description: 'Бет номери' }
+      },
+      responses: {
+        NotFound: {
+          description: 'Объект табылган жок',
+          content: { 'application/json': { schema: { type: 'object', properties: { detail: { type: 'string', example: 'Not found.' } } } } }
+        }
+      },
+      schemas: {
+        Category: {
+          type: 'object', required: ['id','name','slug','description','icon'],
+          properties: {
+            id:          { type: 'integer', example: 1 },
+            name:        { type: 'string',  example: 'Акыйда' },
+            slug:        { type: 'string',  example: 'акыйда' },
+            description: { type: 'string',  example: 'Ислам ишениминин негиздери.' },
+            icon:        { type: 'string',  example: 'shield-check' }
+          }
+        },
+        PaginatedCategoryList: {
+          type: 'object', required: ['count','results'],
+          properties: {
+            count:    { type: 'integer', example: 4 },
+            next:     { type: 'string', format: 'uri', nullable: true, example: null },
+            previous: { type: 'string', format: 'uri', nullable: true, example: null },
+            results:  { type: 'array', items: { $ref: '#/components/schemas/Category' } }
+          }
+        },
+        Teacher: {
+          type: 'object', required: ['id','name','slug','title','biography'],
+          properties: {
+            id:         { type: 'integer', example: 1 },
+            name:       { type: 'string',  example: 'Абдуллах Алматов' },
+            slug:       { type: 'string',  example: 'абдуллах-алматов' },
+            title:      { type: 'string',  example: 'Куран устазы' },
+            biography:  { type: 'string',  example: '15 жылдан ашык тажрыйбасы бар устаз.' },
+            experience: { type: 'string',  nullable: true, example: '15 жыл' },
+            photo:      { type: 'string',  format: 'uri', nullable: true, example: null }
+          }
+        },
+        PaginatedTeacherList: {
+          type: 'object', required: ['count','results'],
+          properties: {
+            count:    { type: 'integer', example: 3 },
+            next:     { type: 'string', format: 'uri', nullable: true, example: null },
+            previous: { type: 'string', format: 'uri', nullable: true, example: null },
+            results:  { type: 'array', items: { $ref: '#/components/schemas/Teacher' } }
+          }
+        },
+        Lesson: {
+          type: 'object',
+          properties: {
+            id:          { type: 'integer', example: 1 },
+            title:       { type: 'string',  example: 'Таарат алуунун шарттары' },
+            description: { type: 'string',  example: 'Намаз окуудан мурун тааратты туура алуу.' },
+            category:    { allOf: [{ $ref: '#/components/schemas/Category' }], nullable: true },
+            teacher:     { allOf: [{ $ref: '#/components/schemas/Teacher'  }], nullable: true },
+            duration:    { type: 'string',  example: '45 мүнөт' },
+            materials:   { type: 'string',  example: 'Куран, Фикх китеби' },
+            status:      { type: 'string',  example: 'Жеткиликтүү' },
+            order:       { type: 'integer', example: 1 }
+          }
+        },
+        PaginatedLessonList: {
+          type: 'object', required: ['count','results'],
+          properties: {
+            count:    { type: 'integer', example: 8 },
+            next:     { type: 'string', format: 'uri', nullable: true, example: null },
+            previous: { type: 'string', format: 'uri', nullable: true, example: null },
+            results:  { type: 'array', items: { $ref: '#/components/schemas/Lesson' } }
+          }
+        },
+        News: {
+          type: 'object',
+          properties: {
+            id:           { type: 'integer', example: 1 },
+            title:        { type: 'string',  example: 'Жаңы окуу жылы башталды' },
+            slug:         { type: 'string',  example: 'жаңы-окуу-жылы' },
+            category:     { type: 'string',  nullable: true, example: 'Жалпы жаңылыктар' },
+            excerpt:      { type: 'string',  example: 'Бул жыл жаңы сабактар менен башталат.' },
+            content:      { type: 'string',  example: 'Толук мазмун бул жерде...' },
+            image:        { type: 'string',  format: 'uri', nullable: true, example: null },
+            author:       { type: 'string',  nullable: true, example: 'ИРФАН редакциясы' },
+            published_at: { type: 'string',  format: 'date', example: '2025-09-01' }
+          }
+        },
+        PaginatedNewsList: {
+          type: 'object', required: ['count','results'],
+          properties: {
+            count:    { type: 'integer', example: 5 },
+            next:     { type: 'string', format: 'uri', nullable: true, example: null },
+            previous: { type: 'string', format: 'uri', nullable: true, example: null },
+            results:  { type: 'array', items: { $ref: '#/components/schemas/News' } }
+          }
+        },
+        FAQ: {
+          type: 'object',
+          properties: {
+            id:       { type: 'integer', example: 1 },
+            question: { type: 'string',  example: 'Курс акысызбы?' },
+            answer:   { type: 'string',  example: 'Ооба, курс толугу менен акысыз.' },
+            category: { type: 'string',  nullable: true, example: 'Жалпы суроолор' },
+            order:    { type: 'integer', example: 1 }
+          }
+        },
+        PaginatedFAQList: {
+          type: 'object', required: ['count','results'],
+          properties: {
+            count:    { type: 'integer', example: 6 },
+            next:     { type: 'string', format: 'uri', nullable: true, example: null },
+            previous: { type: 'string', format: 'uri', nullable: true, example: null },
+            results:  { type: 'array', items: { $ref: '#/components/schemas/FAQ' } }
+          }
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Көп берилүүчү суроолор — Аруу жүрөк{% endblock %}
+{% block content %}
+<section class="page-hero small"><div class="container"><span class="eyebrow">СУРОО-ЖООП</span><h1>Көп берилүүчү <em>суроолор</em></h1><p>Курс тууралуу негизги суроолорго жооптор ушул жерде жарыяланат.</p></div></section>
+<section class="section tint"><div class="container narrow">{% for faq in faqs %}<details {% if forloop.first %}open{% endif %}><summary>{{ faq.question }} <i data-lucide="plus"></i></summary><p>{{ faq.answer }}</p></details>{% empty %}<p class="placeholder big">Бул маалымат курс уюштуруучулары тарабынан кийин жарыяланат.</p>{% endfor %}</div></section>
+{% endblock %}

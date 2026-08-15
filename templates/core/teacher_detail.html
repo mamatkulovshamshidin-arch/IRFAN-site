@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{{ teacher.name }} — Мугалимдер — Аруу жүрөк{% endblock %}
+{% block content %}
+<article class="article container narrow teacher-detail"><a class="back" href="{% url 'teachers' %}">← Мугалимдерге кайтуу</a><div class="teacher-detail-head"><div class="avatar">{% if teacher.photo %}<img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">{% else %}{{ teacher.name|slice:':1' }}{% endif %}</div><div><span class="eyebrow">МУГАЛИМ</span><h1>{{ teacher.name }}</h1><p class="teacher-title">{{ teacher.title }}</p>{% if teacher.experience %}<p><i data-lucide="award"></i> {{ teacher.experience }}</p>{% endif %}</div></div><div class="prose"><h2>Кыскача маалымат</h2><p>{{ teacher.biography|linebreaksbr }}</p></div></article>
+{% endblock %}
