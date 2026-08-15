@@ -2,8 +2,9 @@ services:
   - type: web
     name: irfan-site
     runtime: python
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
-    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -26,3 +27,4 @@ databases:
   - name: irfan-db
     databaseName: irfan
     user: irfan
+    plan: free
