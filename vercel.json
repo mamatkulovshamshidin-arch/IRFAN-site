@@ -22,5 +22,13 @@
       "src": "/(.*)",
       "dest": "config/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "SECRET_KEY": "irfan-aruu-jurok-vercel-secret-key-2025-bishkek-kg",
+    "DEBUG": "False",
+    "ALLOWED_HOSTS": ".vercel.app,localhost,127.0.0.1",
+    "CSRF_TRUSTED_ORIGINS": "https://*.vercel.app",
+    "SECURE_SSL_REDIRECT": "False",
+    "SECURE_HSTS_SECONDS": "0"
+  }
 }
