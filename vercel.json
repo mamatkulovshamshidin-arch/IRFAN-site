@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput",
   "builds": [
     {
       "src": "config/wsgi.py",
@@ -7,28 +9,12 @@
         "maxLambdaSize": "50mb",
         "runtime": "python3.12"
       }
-    },
-    {
-      "src": "staticfiles/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/staticfiles/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "config/wsgi.py"
     }
-  ],
-  "env": {
-    "SECRET_KEY": "irfan-aruu-jurok-vercel-secret-key-2025-bishkek-kg",
-    "DEBUG": "True",
-    "ALLOWED_HOSTS": ".vercel.app,localhost,127.0.0.1",
-    "CSRF_TRUSTED_ORIGINS": "https://*.vercel.app",
-    "SECURE_SSL_REDIRECT": "False",
-    "SECURE_HSTS_SECONDS": "0"
-  }
+  ]
 }

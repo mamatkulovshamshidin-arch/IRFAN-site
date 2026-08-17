@@ -1,8 +1,24 @@
+# Web framework
 Django>=5.0,<6.0
+
+# REST API
 djangorestframework>=3.15
 drf-spectacular>=0.27
+
+# Environment variables
 django-environ>=0.11
+
+# Database URL parsing (DATABASE_URL → Django DATABASES dict)
+dj-database-url>=2.1
+
+# PostgreSQL driver (psycopg2 — production-стандарт, django-environ менен шайкеш)
+psycopg2-binary>=2.9
+
+# Image processing (Teacher/News/Testimonial photo fields үчүн)
 Pillow>=10.0
+
+# Static files serving (WhiteNoise — Vercel'де staticfiles берүү үчүн)
 whitenoise>=6.6
-psycopg[binary]>=3.1
+
+# WSGI server
 gunicorn>=21.2
